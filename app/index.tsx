@@ -5,7 +5,8 @@ import {
   StyleSheet, 
   ScrollView, 
   TouchableOpacity,
-  Dimensions 
+  Dimensions,
+  Image 
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -17,7 +18,8 @@ import {
   Star,
   ShieldCheck,
   Zap,
-  Globe
+  Globe,
+  Heart
 } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -92,8 +94,13 @@ export default function WelcomeScreen() {
         style={styles.header}
       >
         <View style={styles.headerContent}>
-          <Text style={styles.appTitle}>سوق العرب</Text>
-          <Text style={styles.appSubtitle}>منصة التجارة الإلكترونية الشاملة</Text>
+          <View style={styles.logoContainer}>
+            <View style={styles.foxIcon}>
+              <Heart size={32} color="#fff" />
+            </View>
+            <Text style={styles.appTitle}>Fox Bazzar</Text>
+          </View>
+          <Text style={styles.appSubtitle}>منصة التجارة الإلكترونية الذكية</Text>
           
           <View style={styles.featuresContainer}>
             {features.map((feature, index) => (
@@ -155,7 +162,7 @@ export default function WelcomeScreen() {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            مرحباً بك في منصة سوق العرب - حيث تلتقي التجارة بالتكنولوجيا
+            مرحباً بك في Fox Bazzar - حيث تلتقي التجارة بالتكنولوجيا
           </Text>
         </View>
       </View>
@@ -176,12 +183,24 @@ const styles = StyleSheet.create({
   headerContent: {
     alignItems: 'center',
   },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  foxIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
   appTitle: {
     fontSize: 36,
     fontFamily: 'Cairo-Bold',
     color: '#fff',
-    textAlign: 'center',
-    marginBottom: 8,
   },
   appSubtitle: {
     fontSize: 18,
