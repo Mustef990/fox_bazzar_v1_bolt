@@ -11,17 +11,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Megaphone,
-  Plus,
-  Eye,
-  Edit,
-  Trash2,
-  X,
-  Calendar,
-  Target,
-  DollarSign
-} from 'lucide-react-native';
+import { Megaphone, Plus, Eye, CreditCard as Edit, Trash2, X, Calendar, Target, DollarSign } from 'lucide-react-native';
 
 export default function AdminAdsScreen() {
   const [createAdModalVisible, setCreateAdModalVisible] = useState(false);

@@ -9,18 +9,7 @@ import {
   Switch,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Truck,
-  MapPin,
-  Clock,
-  DollarSign,
-  Package,
-  CheckCircle,
-  Navigation,
-  Bell,
-  Star,
-  Activity
-} from 'lucide-react-native';
+import { Truck, MapPin, Clock, DollarSign, Package, CircleCheck as CheckCircle, Navigation, Bell, Star, Activity } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 

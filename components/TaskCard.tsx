@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { CheckCircle, Clock, DollarSign, Target } from 'lucide-react-native';
+import { CircleCheck as CheckCircle, Clock, DollarSign, Target } from 'lucide-react-native';
 
 interface TaskCardProps {
   task: {

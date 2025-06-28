@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Truck, MapPin, Package, Clock, Wallet, Settings, BarChart3, CheckCircle } from 'lucide-react-native';
+import { Truck, MapPin, Package, Clock, Wallet, Settings, ChartBar as BarChart3, CircleCheck as CheckCircle } from 'lucide-react-native';
 
 export default function DeliveryLayout() {
   return (

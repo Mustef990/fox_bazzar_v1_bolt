@@ -8,14 +8,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Megaphone,
-  Gift,
-  Clock,
-  Target,
-  Star,
-  CheckCircle
-} from 'lucide-react-native';
+import { Megaphone, Gift, Clock, Target, Star, CircleCheck as CheckCircle } from 'lucide-react-native';
 import TaskCard from '@/components/TaskCard';
 
 export default function CustomerAdsScreen() {
