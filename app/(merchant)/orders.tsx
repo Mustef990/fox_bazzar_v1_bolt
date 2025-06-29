@@ -8,19 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  ShoppingCart, 
-  Search, 
-  Filter, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  Package,
-  Truck,
-  MapPin,
-  Phone,
-  User
-} from 'lucide-react-native';
+import { ShoppingCart, Search, Filter, Clock, CircleCheck as CheckCircle, Circle as XCircle, Package, Truck, MapPin, Phone, User } from 'lucide-react-native';
 
 export default function MerchantOrdersScreen() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');

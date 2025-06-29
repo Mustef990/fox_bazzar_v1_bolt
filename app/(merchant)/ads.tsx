@@ -11,20 +11,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Megaphone, 
-  Plus, 
-  Eye, 
-  Edit, 
-  Trash2, 
-  X, 
-  Calendar, 
-  Target, 
-  DollarSign,
-  TrendingUp,
-  Users,
-  BarChart3
-} from 'lucide-react-native';
+import { Megaphone, Plus, Eye, CreditCard as Edit, Trash2, X, Calendar, Target, DollarSign, TrendingUp, Users, ChartBar as BarChart3 } from 'lucide-react-native';
 
 export default function MerchantAdsScreen() {
   const [createAdModalVisible, setCreateAdModalVisible] = useState(false);

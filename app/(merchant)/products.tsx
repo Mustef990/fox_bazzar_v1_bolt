@@ -11,20 +11,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Package, 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  X,
-  Camera,
-  DollarSign,
-  Tag,
-  BarChart3
-} from 'lucide-react-native';
+import { Package, Plus, Search, Filter, CreditCard as Edit, Trash2, Eye, X, Camera, DollarSign, Tag, ChartBar as BarChart3 } from 'lucide-react-native';
 
 export default function MerchantProductsScreen() {
   const [searchQuery, setSearchQuery] = useState('');

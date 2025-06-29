@@ -9,22 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Settings,
-  Store,
-  Bell,
-  Shield,
-  CreditCard,
-  Truck,
-  Users,
-  BarChart3,
-  Mail,
-  Phone,
-  MapPin,
-  ChevronRight,
-  Edit,
-  Camera
-} from 'lucide-react-native';
+import { Settings, Store, Bell, Shield, CreditCard, Truck, Users, ChartBar as BarChart3, Mail, Phone, MapPin, ChevronRight, CreditCard as Edit, Camera } from 'lucide-react-native';
 
 export default function MerchantSettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
