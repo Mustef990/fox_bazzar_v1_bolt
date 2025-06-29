@@ -47,5 +47,9 @@
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
     "typescript": "~5.8.3"
+  },
+  "resolutions": {
+    "@react-navigation/native": "^7.0.14",
+    "@react-navigation/bottom-tabs": "^7.2.0"
   }
 }
