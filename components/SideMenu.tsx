@@ -40,7 +40,7 @@ export default function SideMenu({
   onClose,
   title,
   subtitle,
-  menuSections,
+  menuSections = [],
   gradientColors
 }: SideMenuProps) {
   const [expandedSections, setExpandedSections] = React.useState<string[]>([]);
