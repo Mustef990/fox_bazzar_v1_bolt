@@ -97,4 +97,3 @@ export default function AdminLayout() {
     </Tabs>
   );
 }
-</Tabs>
