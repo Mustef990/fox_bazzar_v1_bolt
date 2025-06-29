@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Store, Package, ShoppingCart, ChartBar as BarChart3, Wallet, Settings, Megaphone, Users } from 'lucide-react-native';
+import { Store, Package, ShoppingCart, ChartBar as BarChart3 } from 'lucide-react-native';
 
 export default function MerchantLayout() {
   return (
@@ -50,47 +50,11 @@ export default function MerchantLayout() {
         }}
       />
       <Tabs.Screen
-        name="customers"
-        options={{
-          title: 'العملاء',
-          tabBarIcon: ({ size, color }) => (
-            <Users size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="ads"
-        options={{
-          title: 'الإعلانات',
-          tabBarIcon: ({ size, color }) => (
-            <Megaphone size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="analytics"
         options={{
           title: 'التقارير',
           tabBarIcon: ({ size, color }) => (
             <BarChart3 size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: 'المحفظة',
-          tabBarIcon: ({ size, color }) => (
-            <Wallet size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'الإعدادات',
-          tabBarIcon: ({ size, color }) => (
-            <Settings size={size} color={color} />
           ),
         }}
       />

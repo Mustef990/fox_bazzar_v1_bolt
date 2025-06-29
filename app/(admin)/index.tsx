@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -19,12 +19,18 @@ import {
   Plus,
   Eye,
   Settings,
-  Activity
+  Activity,
+  Menu,
+  Megaphone,
+  Wallet
 } from 'lucide-react-native';
+import SideMenu from '@/components/SideMenu';
 
 const { width } = Dimensions.get('window');
 
 export default function AdminDashboard() {
+  const [sideMenuVisible, setSideMenuVisible] = useState(false);
+
   const stats = [
     {
       title: 'إجمالي المستخدمين',
@@ -74,6 +80,37 @@ export default function AdminDashboard() {
     { type: 'delivery', message: 'تم تسليم 5 طلبات بنجاح', time: 'منذ 20 دقيقة' }
   ];
 
+  const sideMenuItems = [
+    {
+      id: 'merchants',
+      title: 'إدارة التجار',
+      icon: Store,
+      color: '#10b981',
+      onPress: () => console.log('Navigate to merchants')
+    },
+    {
+      id: 'delivery',
+      title: 'إدارة التوصيل',
+      icon: Truck,
+      color: '#8b5cf6',
+      onPress: () => console.log('Navigate to delivery')
+    },
+    {
+      id: 'ads',
+      title: 'إدارة الإعلانات',
+      icon: Megaphone,
+      color: '#f59e0b',
+      onPress: () => console.log('Navigate to ads')
+    },
+    {
+      id: 'wallet',
+      title: 'إدارة المحفظة',
+      icon: Wallet,
+      color: '#059669',
+      onPress: () => console.log('Navigate to wallet')
+    },
+  ];
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
@@ -86,12 +123,22 @@ export default function AdminDashboard() {
               <Text style={styles.welcomeText}>مرحباً بك</Text>
               <Text style={styles.adminName}>المدير العام</Text>
             </View>
-            <TouchableOpacity style={styles.notificationButton}>
-              <Bell size={24} color="#fff" />
-              <View style={styles.notificationBadge}>
-                <Text style={styles.badgeText}>3</Text>
-              </View>
-            </TouchableOpacity>
+            
+            <View style={styles.headerActions}>
+              <TouchableOpacity style={styles.notificationButton}>
+                <Bell size={24} color="#fff" />
+                <View style={styles.notificationBadge}>
+                  <Text style={styles.badgeText}>3</Text>
+                </View>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.menuButton}
+                onPress={() => setSideMenuVisible(true)}
+              >
+                <Menu size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
           </View>
           
           <View style={styles.todayStats}>
@@ -159,6 +206,15 @@ export default function AdminDashboard() {
           </View>
         </View>
       </View>
+
+      <SideMenu
+        visible={sideMenuVisible}
+        onClose={() => setSideMenuVisible(false)}
+        title="القائمة الإضافية"
+        subtitle="المزيد من الخيارات والإعدادات"
+        menuItems={sideMenuItems}
+        gradientColors={['#1e40af', '#3b82f6']}
+      />
     </ScrollView>
   );
 }
@@ -193,6 +249,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginTop: 4,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   notificationButton: {
     position: 'relative',
     width: 44,
@@ -201,6 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
   },
   notificationBadge: {
     position: 'absolute',
@@ -217,6 +278,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Cairo-Bold',
     color: '#fff',
+  },
+  menuButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   todayStats: {
     flexDirection: 'row',

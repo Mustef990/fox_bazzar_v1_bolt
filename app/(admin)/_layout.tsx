@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { LayoutDashboard, Users, Store, Truck, Megaphone, Wallet, Settings, ChartBar as BarChart3 } from 'lucide-react-native';
+import { LayoutDashboard, Users, Settings, ChartBar as BarChart3 } from 'lucide-react-native';
 
 export default function AdminLayout() {
   return (
@@ -37,42 +37,6 @@ export default function AdminLayout() {
           title: 'المستخدمين',
           tabBarIcon: ({ size, color }) => (
             <Users size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="merchants"
-        options={{
-          title: 'التجار',
-          tabBarIcon: ({ size, color }) => (
-            <Store size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="delivery"
-        options={{
-          title: 'التوصيل',
-          tabBarIcon: ({ size, color }) => (
-            <Truck size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="ads"
-        options={{
-          title: 'الإعلانات',
-          tabBarIcon: ({ size, color }) => (
-            <Megaphone size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: 'المحفظة',
-          tabBarIcon: ({ size, color }) => (
-            <Wallet size={size} color={color} />
           ),
         }}
       />

@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Truck, MapPin, Package, Clock, Wallet, Settings, ChartBar as BarChart3, CircleCheck as CheckCircle } from 'lucide-react-native';
+import { Truck, Package, MapPin, Settings } from 'lucide-react-native';
 
 export default function DeliveryLayout() {
   return (
@@ -46,42 +46,6 @@ export default function DeliveryLayout() {
           title: 'الخريطة',
           tabBarIcon: ({ size, color }) => (
             <MapPin size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: 'السجل',
-          tabBarIcon: ({ size, color }) => (
-            <Clock size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="completed"
-        options={{
-          title: 'المكتملة',
-          tabBarIcon: ({ size, color }) => (
-            <CheckCircle size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="earnings"
-        options={{
-          title: 'الأرباح',
-          tabBarIcon: ({ size, color }) => (
-            <BarChart3 size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: 'المحفظة',
-          tabBarIcon: ({ size, color }) => (
-            <Wallet size={size} color={color} />
           ),
         }}
       />

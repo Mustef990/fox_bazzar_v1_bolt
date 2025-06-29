@@ -20,13 +20,18 @@ import {
   Filter,
   Zap,
   Gift,
-  Truck
+  Truck,
+  Menu,
+  Megaphone,
+  Wallet
 } from 'lucide-react-native';
+import SideMenu from '@/components/SideMenu';
 
 const { width } = Dimensions.get('window');
 
 export default function CustomerHome() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [sideMenuVisible, setSideMenuVisible] = useState(false);
 
   const categories = [
     { name: 'إلكترونيات', icon: '📱', color: '#3b82f6' },
@@ -85,6 +90,37 @@ export default function CustomerHome() {
     },
   ];
 
+  const sideMenuItems = [
+    {
+      id: 'favorites',
+      title: 'المفضلة',
+      icon: Heart,
+      color: '#ef4444',
+      onPress: () => console.log('Navigate to favorites')
+    },
+    {
+      id: 'offers',
+      title: 'العروض',
+      icon: Gift,
+      color: '#f59e0b',
+      onPress: () => console.log('Navigate to offers')
+    },
+    {
+      id: 'ads',
+      title: 'الإعلانات',
+      icon: Megaphone,
+      color: '#8b5cf6',
+      onPress: () => console.log('Navigate to ads')
+    },
+    {
+      id: 'wallet',
+      title: 'المحفظة',
+      icon: Wallet,
+      color: '#059669',
+      onPress: () => console.log('Navigate to wallet')
+    },
+  ];
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
@@ -96,12 +132,22 @@ export default function CustomerHome() {
             <MapPin size={16} color="#fff" />
             <Text style={styles.locationText}>دمشق، سوريا</Text>
           </View>
-          <TouchableOpacity style={styles.notificationButton}>
-            <Bell size={24} color="#fff" />
-            <View style={styles.notificationBadge}>
-              <Text style={styles.badgeText}>3</Text>
-            </View>
-          </TouchableOpacity>
+          
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.notificationButton}>
+              <Bell size={24} color="#fff" />
+              <View style={styles.notificationBadge}>
+                <Text style={styles.badgeText}>3</Text>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.menuButton}
+              onPress={() => setSideMenuVisible(true)}
+            >
+              <Menu size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text style={styles.welcomeText}>مرحباً بك في Fox Bazzar</Text>
@@ -222,6 +268,15 @@ export default function CustomerHome() {
           </View>
         </View>
       </View>
+
+      <SideMenu
+        visible={sideMenuVisible}
+        onClose={() => setSideMenuVisible(false)}
+        title="القائمة الإضافية"
+        subtitle="المزيد من الخيارات والميزات"
+        menuItems={sideMenuItems}
+        gradientColors={['#dc2626', '#ef4444']}
+      />
     </ScrollView>
   );
 }
@@ -252,6 +307,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginLeft: 4,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   notificationButton: {
     position: 'relative',
     width: 44,
@@ -260,6 +319,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
   },
   notificationBadge: {
     position: 'absolute',
@@ -276,6 +336,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Cairo-Bold',
     color: '#fff',
+  },
+  menuButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   welcomeText: {
     fontSize: 24,

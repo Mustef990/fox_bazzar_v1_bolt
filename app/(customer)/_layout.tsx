@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Search, ShoppingCart, Heart, User, Wallet, Megaphone, Gift } from 'lucide-react-native';
+import { Chrome as Home, Search, ShoppingCart, User } from 'lucide-react-native';
 
 export default function CustomerLayout() {
   return (
@@ -46,42 +46,6 @@ export default function CustomerLayout() {
           title: 'السلة',
           tabBarIcon: ({ size, color }) => (
             <ShoppingCart size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          title: 'المفضلة',
-          tabBarIcon: ({ size, color }) => (
-            <Heart size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="offers"
-        options={{
-          title: 'العروض',
-          tabBarIcon: ({ size, color }) => (
-            <Gift size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="ads"
-        options={{
-          title: 'الإعلانات',
-          tabBarIcon: ({ size, color }) => (
-            <Megaphone size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: 'المحفظة',
-          tabBarIcon: ({ size, color }) => (
-            <Wallet size={size} color={color} />
           ),
         }}
       />

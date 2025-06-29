@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -19,12 +19,19 @@ import {
   Plus,
   Bell,
   Star,
-  Activity
+  Activity,
+  Menu,
+  Megaphone,
+  Wallet,
+  Settings
 } from 'lucide-react-native';
+import SideMenu from '@/components/SideMenu';
 
 const { width } = Dimensions.get('window');
 
 export default function MerchantDashboard() {
+  const [sideMenuVisible, setSideMenuVisible] = useState(false);
+
   const stats = [
     {
       title: 'إجمالي المنتجات',
@@ -79,6 +86,37 @@ export default function MerchantDashboard() {
     { name: 'ساعة ذكية', sales: 28, image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=150' },
   ];
 
+  const sideMenuItems = [
+    {
+      id: 'customers',
+      title: 'إدارة العملاء',
+      icon: Users,
+      color: '#3b82f6',
+      onPress: () => console.log('Navigate to customers')
+    },
+    {
+      id: 'ads',
+      title: 'إدارة الإعلانات',
+      icon: Megaphone,
+      color: '#f59e0b',
+      onPress: () => console.log('Navigate to ads')
+    },
+    {
+      id: 'wallet',
+      title: 'المحفظة',
+      icon: Wallet,
+      color: '#059669',
+      onPress: () => console.log('Navigate to wallet')
+    },
+    {
+      id: 'settings',
+      title: 'الإعدادات',
+      icon: Settings,
+      color: '#64748b',
+      onPress: () => console.log('Navigate to settings')
+    },
+  ];
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
@@ -91,12 +129,22 @@ export default function MerchantDashboard() {
               <Text style={styles.welcomeText}>مرحباً بك</Text>
               <Text style={styles.merchantName}>متجر الإلكترونيات</Text>
             </View>
-            <TouchableOpacity style={styles.notificationButton}>
-              <Bell size={24} color="#fff" />
-              <View style={styles.notificationBadge}>
-                <Text style={styles.badgeText}>5</Text>
-              </View>
-            </TouchableOpacity>
+            
+            <View style={styles.headerActions}>
+              <TouchableOpacity style={styles.notificationButton}>
+                <Bell size={24} color="#fff" />
+                <View style={styles.notificationBadge}>
+                  <Text style={styles.badgeText}>5</Text>
+                </View>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.menuButton}
+                onPress={() => setSideMenuVisible(true)}
+              >
+                <Menu size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
           </View>
           
           <View style={styles.todayStats}>
@@ -186,6 +234,15 @@ export default function MerchantDashboard() {
           </View>
         </View>
       </View>
+
+      <SideMenu
+        visible={sideMenuVisible}
+        onClose={() => setSideMenuVisible(false)}
+        title="القائمة الإضافية"
+        subtitle="المزيد من الخيارات والإعدادات"
+        menuItems={sideMenuItems}
+        gradientColors={['#059669', '#10b981']}
+      />
     </ScrollView>
   );
 }
@@ -229,6 +286,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginTop: 4,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   notificationButton: {
     position: 'relative',
     width: 44,
@@ -237,6 +298,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
   },
   notificationBadge: {
     position: 'absolute',
@@ -253,6 +315,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Cairo-Bold',
     color: '#fff',
+  },
+  menuButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   todayStats: {
     flexDirection: 'row',
