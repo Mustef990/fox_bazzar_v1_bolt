@@ -8,15 +8,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Heart, 
-  Star, 
-  ShoppingCart, 
-  Share2,
-  Filter,
-  Grid3X3,
-  List
-} from 'lucide-react-native';
+import { Heart, Star, ShoppingCart, Share2, Filter, Grid3x3 as Grid3X3, List } from 'lucide-react-native';
 
 export default function FavoritesScreen() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

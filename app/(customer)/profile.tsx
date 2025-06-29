@@ -10,25 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  User, 
-  Settings, 
-  ShoppingBag, 
-  Heart, 
-  MapPin, 
-  CreditCard,
-  Bell,
-  Shield,
-  HelpCircle,
-  LogOut,
-  Edit,
-  Star,
-  Gift,
-  Truck,
-  Phone,
-  Mail,
-  ChevronRight
-} from 'lucide-react-native';
+import { User, Settings, ShoppingBag, Heart, MapPin, CreditCard, Bell, Shield, CircleHelp as HelpCircle, LogOut, CreditCard as Edit, Star, Gift, Truck, Phone, Mail, ChevronRight } from 'lucide-react-native';
 
 export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);

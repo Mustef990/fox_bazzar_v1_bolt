@@ -9,18 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Search, 
-  Filter, 
-  Star, 
-  Heart, 
-  ShoppingCart,
-  SlidersHorizontal,
-  Grid3X3,
-  List,
-  TrendingUp,
-  Clock
-} from 'lucide-react-native';
+import { Search, Filter, Star, Heart, ShoppingCart, SlidersHorizontal, Grid3x3 as Grid3X3, List, TrendingUp, Clock } from 'lucide-react-native';
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
