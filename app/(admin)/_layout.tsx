@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { LayoutDashboard, Users, Store, Truck, Megaphone, Wallet, Settings, ChartBar as BarChart3 } from 'lucide-react-native';
+import { LayoutDashboard, Users, Store, Truck, Megaphone, Wallet, Settings, BarChart3 } from 'lucide-react-native';
 
 export default function AdminLayout() {
   return (
@@ -97,3 +97,4 @@ export default function AdminLayout() {
     </Tabs>
   );
 }
+</Tabs>

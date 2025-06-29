@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Search, ShoppingCart, Heart, User, Wallet, Megaphone, Gift } from 'lucide-react-native';
+import { Home, Search, ShoppingCart, Heart, User, Wallet, Megaphone, Gift } from 'lucide-react-native';
 
 export default function CustomerLayout() {
   return (

@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Store, Package, ShoppingCart, ChartBar as BarChart3, Wallet, Settings, Megaphone, Users } from 'lucide-react-native';
+import { Store, Package, ShoppingCart, BarChart3, Wallet, Settings, Megaphone, Users } from 'lucide-react-native';
 
 export default function MerchantLayout() {
   return (
