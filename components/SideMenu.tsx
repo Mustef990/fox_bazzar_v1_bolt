@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { X } from 'lucide-react-native';
+import { X, ChevronDown } from 'lucide-react-native';
 
 interface MenuItem {
   id: string;
@@ -18,12 +18,20 @@ interface MenuItem {
   onPress: () => void;
 }
 
+interface MenuSection {
+  id: string;
+  title: string;
+  icon: React.ComponentType<any>;
+  color: string;
+  items: MenuItem[];
+}
+
 interface SideMenuProps {
   visible: boolean;
   onClose: () => void;
   title: string;
   subtitle: string;
-  menuItems: MenuItem[];
+  menuSections: MenuSection[];
   gradientColors: string[];
 }
 
@@ -32,9 +40,19 @@ export default function SideMenu({
   onClose,
   title,
   subtitle,
-  menuItems,
+  menuSections,
   gradientColors
 }: SideMenuProps) {
+  const [expandedSections, setExpandedSections] = React.useState<string[]>([]);
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => 
+      prev.includes(sectionId) 
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId]
+    );
+  };
+
   return (
     <Modal
       visible={visible}
@@ -61,21 +79,52 @@ export default function SideMenu({
           </LinearGradient>
           
           <ScrollView style={styles.menuBody} showsVerticalScrollIndicator={false}>
-            {menuItems.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.menuItem}
-                onPress={() => {
-                  item.onPress();
-                  onClose();
-                }}
-              >
-                <View style={[styles.menuIcon, { backgroundColor: item.color }]}>
-                  <item.icon size={20} color="#fff" />
+            {menuSections.map((section) => {
+              const isExpanded = expandedSections.includes(section.id);
+              
+              return (
+                <View key={section.id} style={styles.sectionContainer}>
+                  <TouchableOpacity
+                    style={styles.sectionHeader}
+                    onPress={() => toggleSection(section.id)}
+                  >
+                    <View style={styles.sectionLeft}>
+                      <View style={[styles.sectionIcon, { backgroundColor: section.color }]}>
+                        <section.icon size={20} color="#fff" />
+                      </View>
+                      <Text style={styles.sectionTitle}>{section.title}</Text>
+                    </View>
+                    
+                    <View style={[
+                      styles.expandIcon,
+                      isExpanded && styles.expandIconRotated
+                    ]}>
+                      <ChevronDown size={20} color="#64748b" />
+                    </View>
+                  </TouchableOpacity>
+                  
+                  {isExpanded && (
+                    <View style={styles.sectionItems}>
+                      {section.items.map((item) => (
+                        <TouchableOpacity
+                          key={item.id}
+                          style={styles.menuItem}
+                          onPress={() => {
+                            item.onPress();
+                            onClose();
+                          }}
+                        >
+                          <View style={[styles.menuIcon, { backgroundColor: item.color }]}>
+                            <item.icon size={18} color="#fff" />
+                          </View>
+                          <Text style={styles.menuItemText}>{item.title}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
                 </View>
-                <Text style={styles.menuItemText}>{item.title}</Text>
-              </TouchableOpacity>
-            ))}
+              );
+            })}
           </ScrollView>
         </View>
       </View>
@@ -133,27 +182,72 @@ const styles = StyleSheet.create({
   menuBody: {
     padding: 20,
   },
-  menuItem: {
+  sectionContainer: {
+    marginBottom: 16,
+    backgroundColor: '#f8fafc',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  sectionLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    marginBottom: 8,
-    backgroundColor: '#f8fafc',
+    flex: 1,
   },
-  menuIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  sectionIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 12,
   },
-  menuItemText: {
+  sectionTitle: {
     fontSize: 16,
     fontFamily: 'Cairo-Bold',
     color: '#1e293b',
+    flex: 1,
+    textAlign: 'right',
+  },
+  expandIcon: {
+    transform: [{ rotate: '0deg' }],
+    transition: 'transform 0.3s ease',
+  },
+  expandIconRotated: {
+    transform: [{ rotate: '180deg' }],
+  },
+  sectionItems: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    marginBottom: 4,
+    backgroundColor: '#fff',
+    marginLeft: 20,
+  },
+  menuIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  menuItemText: {
+    fontSize: 14,
+    fontFamily: 'Cairo-Bold',
+    color: '#374151',
     flex: 1,
     textAlign: 'right',
   },

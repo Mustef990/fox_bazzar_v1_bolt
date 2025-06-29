@@ -23,7 +23,8 @@ import {
   Truck,
   Menu,
   Megaphone,
-  Wallet
+  Wallet,
+  User
 } from 'lucide-react-native';
 import SideMenu from '@/components/SideMenu';
 
@@ -90,35 +91,95 @@ export default function CustomerHome() {
     },
   ];
 
-  const sideMenuItems = [
+  const sideMenuSections = [
     {
-      id: 'favorites',
-      title: 'المفضلة',
+      id: 'shopping',
+      title: 'التسوق والمفضلة',
       icon: Heart,
       color: '#ef4444',
-      onPress: () => console.log('Navigate to favorites')
+      items: [
+        {
+          id: 'favorites',
+          title: 'المفضلة',
+          icon: Heart,
+          color: '#ef4444',
+          onPress: () => console.log('Navigate to favorites')
+        },
+        {
+          id: 'wishlist',
+          title: 'قائمة الأمنيات',
+          icon: Star,
+          color: '#fbbf24',
+          onPress: () => console.log('Navigate to wishlist')
+        }
+      ]
     },
     {
-      id: 'offers',
-      title: 'العروض',
+      id: 'deals',
+      title: 'العروض والخصومات',
       icon: Gift,
       color: '#f59e0b',
-      onPress: () => console.log('Navigate to offers')
+      items: [
+        {
+          id: 'offers',
+          title: 'العروض الخاصة',
+          icon: Gift,
+          color: '#f59e0b',
+          onPress: () => console.log('Navigate to offers')
+        },
+        {
+          id: 'coupons',
+          title: 'كوبونات الخصم',
+          icon: Zap,
+          color: '#8b5cf6',
+          onPress: () => console.log('Navigate to coupons')
+        }
+      ]
     },
     {
-      id: 'ads',
-      title: 'الإعلانات',
+      id: 'marketing',
+      title: 'الإعلانات والمهام',
       icon: Megaphone,
       color: '#8b5cf6',
-      onPress: () => console.log('Navigate to ads')
+      items: [
+        {
+          id: 'ads',
+          title: 'الإعلانات',
+          icon: Megaphone,
+          color: '#8b5cf6',
+          onPress: () => console.log('Navigate to ads')
+        },
+        {
+          id: 'tasks',
+          title: 'المهام والمكافآت',
+          icon: Gift,
+          color: '#10b981',
+          onPress: () => console.log('Navigate to tasks')
+        }
+      ]
     },
     {
-      id: 'wallet',
-      title: 'المحفظة',
+      id: 'financial',
+      title: 'المحفظة والمدفوعات',
       icon: Wallet,
       color: '#059669',
-      onPress: () => console.log('Navigate to wallet')
-    },
+      items: [
+        {
+          id: 'wallet',
+          title: 'المحفظة',
+          icon: Wallet,
+          color: '#059669',
+          onPress: () => console.log('Navigate to wallet')
+        },
+        {
+          id: 'payment-methods',
+          title: 'طرق الدفع',
+          icon: ShoppingCart,
+          color: '#3b82f6',
+          onPress: () => console.log('Navigate to payment methods')
+        }
+      ]
+    }
   ];
 
   return (
@@ -274,7 +335,7 @@ export default function CustomerHome() {
         onClose={() => setSideMenuVisible(false)}
         title="القائمة الإضافية"
         subtitle="المزيد من الخيارات والميزات"
-        menuItems={sideMenuItems}
+        menuSections={sideMenuSections}
         gradientColors={['#dc2626', '#ef4444']}
       />
     </ScrollView>

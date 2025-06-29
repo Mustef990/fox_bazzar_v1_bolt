@@ -23,7 +23,9 @@ import {
   Menu,
   Megaphone,
   Wallet,
-  Settings
+  Settings,
+  ChartBar as BarChart3,
+  Store
 } from 'lucide-react-native';
 import SideMenu from '@/components/SideMenu';
 
@@ -86,35 +88,95 @@ export default function MerchantDashboard() {
     { name: 'ساعة ذكية', sales: 28, image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=150' },
   ];
 
-  const sideMenuItems = [
+  const sideMenuSections = [
     {
-      id: 'customers',
-      title: 'إدارة العملاء',
-      icon: Users,
-      color: '#3b82f6',
-      onPress: () => console.log('Navigate to customers')
+      id: 'business',
+      title: 'إدارة الأعمال',
+      icon: Store,
+      color: '#059669',
+      items: [
+        {
+          id: 'customers',
+          title: 'إدارة العملاء',
+          icon: Users,
+          color: '#3b82f6',
+          onPress: () => console.log('Navigate to customers')
+        },
+        {
+          id: 'analytics',
+          title: 'تحليلات المتجر',
+          icon: BarChart3,
+          color: '#8b5cf6',
+          onPress: () => console.log('Navigate to analytics')
+        }
+      ]
     },
     {
-      id: 'ads',
-      title: 'إدارة الإعلانات',
+      id: 'marketing',
+      title: 'التسويق والترويج',
       icon: Megaphone,
       color: '#f59e0b',
-      onPress: () => console.log('Navigate to ads')
+      items: [
+        {
+          id: 'ads',
+          title: 'إدارة الإعلانات',
+          icon: Megaphone,
+          color: '#f59e0b',
+          onPress: () => console.log('Navigate to ads')
+        },
+        {
+          id: 'promotions',
+          title: 'العروض والخصومات',
+          icon: TrendingUp,
+          color: '#ef4444',
+          onPress: () => console.log('Navigate to promotions')
+        }
+      ]
     },
     {
-      id: 'wallet',
-      title: 'المحفظة',
+      id: 'financial',
+      title: 'الإدارة المالية',
       icon: Wallet,
-      color: '#059669',
-      onPress: () => console.log('Navigate to wallet')
+      color: '#10b981',
+      items: [
+        {
+          id: 'wallet',
+          title: 'المحفظة',
+          icon: Wallet,
+          color: '#059669',
+          onPress: () => console.log('Navigate to wallet')
+        },
+        {
+          id: 'earnings',
+          title: 'تقارير الأرباح',
+          icon: DollarSign,
+          color: '#10b981',
+          onPress: () => console.log('Navigate to earnings')
+        }
+      ]
     },
     {
       id: 'settings',
       title: 'الإعدادات',
       icon: Settings,
       color: '#64748b',
-      onPress: () => console.log('Navigate to settings')
-    },
+      items: [
+        {
+          id: 'store-settings',
+          title: 'إعدادات المتجر',
+          icon: Settings,
+          color: '#64748b',
+          onPress: () => console.log('Navigate to settings')
+        },
+        {
+          id: 'notifications',
+          title: 'إعدادات الإشعارات',
+          icon: Bell,
+          color: '#f59e0b',
+          onPress: () => console.log('Navigate to notifications')
+        }
+      ]
+    }
   ];
 
   return (
@@ -240,7 +302,7 @@ export default function MerchantDashboard() {
         onClose={() => setSideMenuVisible(false)}
         title="القائمة الإضافية"
         subtitle="المزيد من الخيارات والإعدادات"
-        menuItems={sideMenuItems}
+        menuSections={sideMenuSections}
         gradientColors={['#059669', '#10b981']}
       />
     </ScrollView>

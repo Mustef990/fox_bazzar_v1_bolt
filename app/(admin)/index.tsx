@@ -22,7 +22,9 @@ import {
   Activity,
   Menu,
   Megaphone,
-  Wallet
+  Wallet,
+  ChartBar as BarChart3,
+  Shield
 } from 'lucide-react-native';
 import SideMenu from '@/components/SideMenu';
 
@@ -80,35 +82,73 @@ export default function AdminDashboard() {
     { type: 'delivery', message: 'تم تسليم 5 طلبات بنجاح', time: 'منذ 20 دقيقة' }
   ];
 
-  const sideMenuItems = [
+  const sideMenuSections = [
     {
-      id: 'merchants',
-      title: 'إدارة التجار',
-      icon: Store,
-      color: '#10b981',
-      onPress: () => console.log('Navigate to merchants')
+      id: 'management',
+      title: 'إدارة المنصة',
+      icon: Shield,
+      color: '#1e40af',
+      items: [
+        {
+          id: 'merchants',
+          title: 'إدارة التجار',
+          icon: Store,
+          color: '#10b981',
+          onPress: () => console.log('Navigate to merchants')
+        },
+        {
+          id: 'delivery',
+          title: 'إدارة التوصيل',
+          icon: Truck,
+          color: '#8b5cf6',
+          onPress: () => console.log('Navigate to delivery')
+        }
+      ]
     },
     {
-      id: 'delivery',
-      title: 'إدارة التوصيل',
-      icon: Truck,
-      color: '#8b5cf6',
-      onPress: () => console.log('Navigate to delivery')
-    },
-    {
-      id: 'ads',
-      title: 'إدارة الإعلانات',
+      id: 'marketing',
+      title: 'التسويق والإعلانات',
       icon: Megaphone,
       color: '#f59e0b',
-      onPress: () => console.log('Navigate to ads')
+      items: [
+        {
+          id: 'ads',
+          title: 'إدارة الإعلانات',
+          icon: Megaphone,
+          color: '#f59e0b',
+          onPress: () => console.log('Navigate to ads')
+        },
+        {
+          id: 'campaigns',
+          title: 'الحملات التسويقية',
+          icon: TrendingUp,
+          color: '#3b82f6',
+          onPress: () => console.log('Navigate to campaigns')
+        }
+      ]
     },
     {
-      id: 'wallet',
-      title: 'إدارة المحفظة',
+      id: 'financial',
+      title: 'الإدارة المالية',
       icon: Wallet,
       color: '#059669',
-      onPress: () => console.log('Navigate to wallet')
-    },
+      items: [
+        {
+          id: 'wallet',
+          title: 'إدارة المحفظة',
+          icon: Wallet,
+          color: '#059669',
+          onPress: () => console.log('Navigate to wallet')
+        },
+        {
+          id: 'transactions',
+          title: 'المعاملات المالية',
+          icon: DollarSign,
+          color: '#10b981',
+          onPress: () => console.log('Navigate to transactions')
+        }
+      ]
+    }
   ];
 
   return (
@@ -212,7 +252,7 @@ export default function AdminDashboard() {
         onClose={() => setSideMenuVisible(false)}
         title="القائمة الإضافية"
         subtitle="المزيد من الخيارات والإعدادات"
-        menuItems={sideMenuItems}
+        menuSections={sideMenuSections}
         gradientColors={['#1e40af', '#3b82f6']}
       />
     </ScrollView>
