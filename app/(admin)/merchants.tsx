@@ -11,23 +11,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Store,
-  Plus,
-  Search,
-  Filter,
-  MoreVertical,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Star,
-  Package,
-  DollarSign,
-  X,
-  Mail,
-  Phone,
-  MapPin
-} from 'lucide-react-native';
+import { Store, Plus, Search, Filter, MoveVertical as MoreVertical, CircleCheck as CheckCircle, Circle as XCircle, Clock, Star, Package, DollarSign, X, Mail, Phone, MapPin } from 'lucide-react-native';
 
 export default function AdminMerchantsScreen() {
   const [searchQuery, setSearchQuery] = useState('');

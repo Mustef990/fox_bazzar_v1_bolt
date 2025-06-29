@@ -8,19 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  ShoppingCart,
-  DollarSign,
-  Calendar,
-  Filter,
-  Download,
-  Eye,
-  Target
-} from 'lucide-react-native';
+import { ChartBar as BarChart3, TrendingUp, TrendingDown, Users, ShoppingCart, DollarSign, Calendar, Filter, Download, Eye, Target } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 

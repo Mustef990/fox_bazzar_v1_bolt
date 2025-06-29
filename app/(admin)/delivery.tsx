@@ -10,21 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Truck,
-  Search,
-  Filter,
-  MapPin,
-  Clock,
-  Package,
-  Star,
-  Phone,
-  Navigation,
-  CheckCircle,
-  XCircle,
-  MoreVertical,
-  UserPlus
-} from 'lucide-react-native';
+import { Truck, Search, Filter, MapPin, Clock, Package, Star, Phone, Navigation, CircleCheck as CheckCircle, Circle as XCircle, MoveVertical as MoreVertical, UserPlus } from 'lucide-react-native';
 
 export default function AdminDeliveryScreen() {
   const [searchQuery, setSearchQuery] = useState('');

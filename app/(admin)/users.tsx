@@ -10,21 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Users,
-  Search,
-  Filter,
-  UserPlus,
-  MoreVertical,
-  Shield,
-  ShieldOff,
-  Trash2,
-  Mail,
-  Phone,
-  Calendar,
-  MapPin,
-  Star
-} from 'lucide-react-native';
+import { Users, Search, Filter, UserPlus, MoveVertical as MoreVertical, Shield, ShieldOff, Trash2, Mail, Phone, Calendar, MapPin, Star } from 'lucide-react-native';
 
 export default function AdminUsersScreen() {
   const [searchQuery, setSearchQuery] = useState('');
