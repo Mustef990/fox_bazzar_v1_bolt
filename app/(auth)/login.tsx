@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Eye, 
   EyeOff, 
@@ -26,6 +27,7 @@ const { width } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const { role } = useLocalSearchParams<{ role: string }>();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -82,11 +84,30 @@ export default function LoginScreen() {
 
     setLoading(true);
     
-    // محاكاة عملية تسجيل الدخول
-    setTimeout(() => {
+    try {
+      const { data, error } = await signIn(email, password);
+      
+      if (error) {
+        Alert.alert('خطأ في تسجيل الدخول', error.message);
+        return;
+      }
+      
+      if (data.user) {
+        // التحقق من دور المستخدم
+        const userRole = data.user.user_metadata?.role || 'customer';
+        
+        if (userRole !== role) {
+          Alert.alert('خطأ', 'هذا الحساب غير مخصص لهذا الدور');
+          return;
+        }
+        
+        router.replace(roleInfo.route);
+      }
+    } catch (err) {
+      Alert.alert('خطأ', 'حدث خطأ غير متوقع');
+    } finally {
       setLoading(false);
-      router.replace(roleInfo.route);
-    }, 1500);
+    }
   };
 
   const handleRegister = () => {

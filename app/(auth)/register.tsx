@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useAuth } from '@/hooks/useAuth';
 import { ArrowRight, Eye, EyeOff, User, Mail, Phone } from 'lucide-react-native';
 
 export default function RegisterScreen() {
   const { role } = useLocalSearchParams<{ role: string }>();
+  const { signUp } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,13 +44,26 @@ export default function RegisterScreen() {
 
     setLoading(true);
     
-    // محاكاة عملية التسجيل
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const { data, error } = await signUp(formData.email, formData.password, {
+        name: formData.name,
+        phone: formData.phone,
+        role: role || 'customer'
+      });
+      
+      if (error) {
+        Alert.alert('خطأ في التسجيل', error.message);
+        return;
+      }
+      
       Alert.alert('نجح التسجيل', 'تم إنشاء حسابك بنجاح', [
         { text: 'حسناً', onPress: () => router.replace(`/(auth)/login?role=${role}`) }
       ]);
-    }, 1500);
+    } catch (err) {
+      Alert.alert('خطأ', 'حدث خطأ غير متوقع');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

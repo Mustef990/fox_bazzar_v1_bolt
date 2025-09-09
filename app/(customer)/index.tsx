@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useProducts } from '@/hooks/useProducts';
+import { useCart } from '@/hooks/useCart';
+import ProductCard from '@/components/ProductCard';
 import {
   View,
   Text,
@@ -33,6 +37,9 @@ const { width } = Dimensions.get('window');
 export default function CustomerHome() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sideMenuVisible, setSideMenuVisible] = useState(false);
+  const { user } = useAuth();
+  const { products, loading: productsLoading } = useProducts();
+  const { addToCart } = useCart();
 
   const categories = [
     { name: 'إلكترونيات', icon: '📱', color: '#3b82f6' },
@@ -43,38 +50,8 @@ export default function CustomerHome() {
     { name: 'جمال', icon: '💄', color: '#ef4444' },
   ];
 
-  const featuredProducts = [
-    {
-      id: 1,
-      name: 'هاتف ذكي متطور',
-      price: '$599',
-      originalPrice: '$699',
-      rating: 4.8,
-      image: 'https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=300',
-      discount: '15%',
-      isFavorite: false
-    },
-    {
-      id: 2,
-      name: 'لابتوب عالي الأداء',
-      price: '$1299',
-      originalPrice: '$1499',
-      rating: 4.9,
-      image: 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=300',
-      discount: '13%',
-      isFavorite: true
-    },
-    {
-      id: 3,
-      name: 'ساعة ذكية رياضية',
-      price: '$299',
-      originalPrice: '$399',
-      rating: 4.7,
-      image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=300',
-      discount: '25%',
-      isFavorite: false
-    },
-  ];
+  // استخدام المنتجات من قاعدة البيانات
+  const featuredProducts = products.slice(0, 6);
 
   const offers = [
     {
@@ -278,38 +255,17 @@ export default function CustomerHome() {
           </View>
           
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {featuredProducts.map((product) => (
-              <View key={product.id} style={styles.productCard}>
-                <View style={styles.productImageContainer}>
-                  <Image source={{ uri: product.image }} style={styles.productImage} />
-                  <TouchableOpacity style={styles.favoriteButton}>
-                    <Heart 
-                      size={20} 
-                      color={product.isFavorite ? '#ef4444' : '#64748b'} 
-                      fill={product.isFavorite ? '#ef4444' : 'transparent'}
-                    />
-                  </TouchableOpacity>
-                  <View style={styles.discountBadge}>
-                    <Text style={styles.discountText}>-{product.discount}</Text>
-                  </View>
-                </View>
-                
-                <View style={styles.productInfo}>
-                  <Text style={styles.productName}>{product.name}</Text>
-                  <View style={styles.ratingContainer}>
-                    <Star size={14} color="#fbbf24" fill="#fbbf24" />
-                    <Text style={styles.ratingText}>{product.rating}</Text>
-                  </View>
-                  <View style={styles.priceContainer}>
-                    <Text style={styles.originalPrice}>{product.originalPrice}</Text>
-                    <Text style={styles.currentPrice}>{product.price}</Text>
-                  </View>
-                  <TouchableOpacity style={styles.addToCartButton}>
-                    <ShoppingCart size={16} color="#fff" />
-                    <Text style={styles.addToCartText}>أضف للسلة</Text>
-                  </TouchableOpacity>
-                </View>
+            {productsLoading ? (
+              <View style={styles.loadingContainer}>
+                <Text style={styles.loadingText}>جاري تحميل المنتجات...</Text>
               </View>
+            ) : featuredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={() => addToCart(product)}
+                onToggleFavorite={() => console.log('Toggle favorite:', product.id)}
+              />
             ))}
           </ScrollView>
         </View>
@@ -546,105 +502,6 @@ const styles = StyleSheet.create({
     color: '#374151',
     textAlign: 'center',
   },
-  productCard: {
-    width: 200,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    marginRight: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-  },
-  productImageContainer: {
-    position: 'relative',
-  },
-  productImage: {
-    width: '100%',
-    height: 150,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
-  favoriteButton: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  discountBadge: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    backgroundColor: '#ef4444',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  discountText: {
-    fontSize: 12,
-    fontFamily: 'Cairo-Bold',
-    color: '#fff',
-  },
-  productInfo: {
-    padding: 16,
-  },
-  productName: {
-    fontSize: 14,
-    fontFamily: 'Cairo-Bold',
-    color: '#1e293b',
-    marginBottom: 8,
-    textAlign: 'right',
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: 8,
-  },
-  ratingText: {
-    fontSize: 12,
-    fontFamily: 'Cairo-Bold',
-    color: '#64748b',
-    marginRight: 4,
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: 12,
-  },
-  originalPrice: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Regular',
-    color: '#94a3b8',
-    textDecorationLine: 'line-through',
-    marginRight: 8,
-  },
-  currentPrice: {
-    fontSize: 16,
-    fontFamily: 'Cairo-Bold',
-    color: '#dc2626',
-  },
-  addToCartButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#dc2626',
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  addToCartText: {
-    fontSize: 12,
-    fontFamily: 'Cairo-Bold',
-    color: '#fff',
-    marginLeft: 4,
-  },
   featuresSection: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -665,5 +522,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Cairo-Bold',
     color: '#374151',
     marginTop: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 50,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: 'Tajawal-Regular',
+    color: '#64748b',
   },
 });

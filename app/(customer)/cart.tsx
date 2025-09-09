@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useOrders } from '@/hooks/useOrders';
+import { useCart } from '@/hooks/useCart';
 import {
   View,
   Text,
@@ -21,40 +24,18 @@ import {
 } from 'lucide-react-native';
 
 export default function CartScreen() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'هاتف ذكي متطور',
-      price: 599,
-      originalPrice: 699,
-      quantity: 1,
-      image: 'https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=300',
-      merchant: 'متجر الإلكترونيات'
-    },
-    {
-      id: 2,
-      name: 'ساعة ذكية رياضية',
-      price: 299,
-      originalPrice: 399,
-      quantity: 2,
-      image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=300',
-      merchant: 'متجر الأجهزة'
-    },
-  ]);
+  const { user } = useAuth();
+  const { createOrder } = useOrders(user?.id, 'customer');
+  const { 
+    cartItems, 
+    loading: cartLoading, 
+    updateQuantity, 
+    removeFromCart, 
+    clearCart,
+    getCartTotal 
+  } = useCart();
 
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems(items => 
-      items.map(item => {
-        if (item.id === id) {
-          const newQuantity = Math.max(0, item.quantity + change);
-          return newQuantity === 0 ? null : { ...item, quantity: newQuantity };
-        }
-        return item;
-      }).filter(Boolean) as typeof cartItems
-    );
-  };
-
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     Alert.alert(
       'حذف المنتج',
       'هل تريد حذف هذا المنتج من السلة؟',
@@ -63,23 +44,74 @@ export default function CartScreen() {
         { 
           text: 'حذف', 
           style: 'destructive',
-          onPress: () => setCartItems(items => items.filter(item => item.id !== id))
+          onPress: () => removeFromCart(id)
         }
       ]
     );
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const savings = cartItems.reduce((sum, item) => sum + ((item.originalPrice - item.price) * item.quantity), 0);
+  const subtotal = getCartTotal();
+  const savings = cartItems.reduce((sum, item) => {
+    if (item.original_price) {
+      return sum + ((item.original_price - item.price) * item.quantity);
+    }
+    return sum;
+  }, 0);
   const shipping = subtotal > 50 ? 0 : 10;
   const total = subtotal + shipping;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cartItems.length === 0) {
       Alert.alert('السلة فارغة', 'أضف منتجات إلى السلة أولاً');
       return;
     }
-    Alert.alert('تم الطلب', 'سيتم توجيهك لصفحة الدفع');
+    
+    if (!user) {
+      Alert.alert('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول لإتمام الطلب');
+      return;
+    }
+    
+    // تجميع المنتجات حسب التاجر
+    const merchantGroups = cartItems.reduce((groups: any, item) => {
+      const merchantId = item.merchant_id || 'default-merchant';
+      if (!groups[merchantId]) {
+        groups[merchantId] = [];
+      }
+      groups[merchantId].push(item);
+      return groups;
+    }, {});
+    
+    try {
+      // إنشاء طلب منفصل لكل تاجر
+      for (const [merchantId, items] of Object.entries(merchantGroups)) {
+        const orderItems = (items as any[]).map(item => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          price: item.price
+        }));
+        
+        const orderTotal = (items as any[]).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        const { error } = await createOrder({
+          merchant_id: merchantId,
+          total_amount: orderTotal + (orderTotal > 50 ? 0 : 10), // إضافة رسوم التوصيل
+          delivery_address: 'شارع الثورة، دمشق، سوريا', // يجب أن يأتي من ملف المستخدم
+          notes: 'طلب من التطبيق',
+          items: orderItems
+        });
+        
+        if (error) {
+          Alert.alert('خطأ في الطلب', error);
+          return;
+        }
+      }
+      
+      // مسح السلة بعد نجاح الطلب
+      clearCart();
+      Alert.alert('تم الطلب بنجاح', 'سيتم التواصل معك قريباً لتأكيد الطلب');
+    } catch (error) {
+      Alert.alert('خطأ', 'حدث خطأ أثناء إنشاء الطلب');
+    }
   };
 
   return (
@@ -106,23 +138,27 @@ export default function CartScreen() {
         ) : (
           <>
             <View style={styles.itemsContainer}>
-              {cartItems.map((item) => (
+              {cartItems.map((item: any) => (
                 <View key={item.id} style={styles.cartItem}>
-                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                  <Image source={{ 
+                    uri: item.image_url || 'https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=300'
+                  }} style={styles.itemImage} />
                   
                   <View style={styles.itemDetails}>
                     <Text style={styles.itemName}>{item.name}</Text>
-                    <Text style={styles.itemMerchant}>{item.merchant}</Text>
+                    <Text style={styles.itemMerchant}>متجر</Text>
                     
                     <View style={styles.priceContainer}>
-                      <Text style={styles.originalPrice}>${item.originalPrice}</Text>
+                      {item.original_price && (
+                        <Text style={styles.originalPrice}>${item.original_price}</Text>
+                      )}
                       <Text style={styles.currentPrice}>${item.price}</Text>
                     </View>
                     
                     <View style={styles.quantityContainer}>
                       <TouchableOpacity
                         style={styles.quantityButton}
-                        onPress={() => updateQuantity(item.id, -1)}
+                        onPress={() => updateQuantity(item.id, item.quantity - 1)}
                       >
                         <Minus size={16} color="#dc2626" />
                       </TouchableOpacity>
@@ -131,7 +167,7 @@ export default function CartScreen() {
                       
                       <TouchableOpacity
                         style={styles.quantityButton}
-                        onPress={() => updateQuantity(item.id, 1)}
+                        onPress={() => updateQuantity(item.id, item.quantity + 1)}
                       >
                         <Plus size={16} color="#dc2626" />
                       </TouchableOpacity>

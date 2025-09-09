@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useOrders } from '@/hooks/useOrders';
 import {
   View,
   Text,
@@ -12,74 +14,23 @@ import { ShoppingCart, Search, Filter, Clock, CircleCheck as CheckCircle, Circle
 
 export default function MerchantOrdersScreen() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const { user } = useAuth();
+  const { orders, loading, updateOrderStatus } = useOrders(user?.id, 'merchant');
 
   const statusFilters = [
-    { key: 'all', label: 'الكل', count: 45 },
-    { key: 'new', label: 'جديد', count: 12 },
-    { key: 'preparing', label: 'قيد التحضير', count: 8 },
-    { key: 'ready', label: 'جاهز للتوصيل', count: 15 },
-    { key: 'delivered', label: 'تم التسليم', count: 10 },
+    { key: 'all', label: 'الكل', count: orders.length },
+    { key: 'pending', label: 'معلق', count: orders.filter(o => o.status === 'pending').length },
+    { key: 'confirmed', label: 'مؤكد', count: orders.filter(o => o.status === 'confirmed').length },
+    { key: 'preparing', label: 'قيد التحضير', count: orders.filter(o => o.status === 'preparing').length },
+    { key: 'ready', label: 'جاهز', count: orders.filter(o => o.status === 'ready').length },
+    { key: 'delivered', label: 'تم التسليم', count: orders.filter(o => o.status === 'delivered').length },
   ];
 
-  const orders = [
-    {
-      id: '#1234',
-      customer: {
-        name: 'أحمد محمد',
-        phone: '+963 123 456 789',
-        address: 'شارع الثورة، دمشق، سوريا'
-      },
-      items: [
-        { name: 'هاتف ذكي', quantity: 1, price: 599 },
-        { name: 'غطاء حماية', quantity: 2, price: 25 }
-      ],
-      total: 649,
-      status: 'new',
-      orderDate: '2024-01-15 14:30',
-      estimatedDelivery: '2024-01-16 16:00',
-      paymentMethod: 'بطاقة ائتمانية',
-      notes: 'يرجى التوصيل بعد الساعة 3 مساءً'
-    },
-    {
-      id: '#1235',
-      customer: {
-        name: 'فاطمة علي',
-        phone: '+963 987 654 321',
-        address: 'حي المزة، دمشق، سوريا'
-      },
-      items: [
-        { name: 'لابتوب', quantity: 1, price: 1299 }
-      ],
-      total: 1299,
-      status: 'preparing',
-      orderDate: '2024-01-15 12:15',
-      estimatedDelivery: '2024-01-16 14:00',
-      paymentMethod: 'نقداً عند التسليم',
-      notes: ''
-    },
-    {
-      id: '#1236',
-      customer: {
-        name: 'محمد حسن',
-        phone: '+963 555 123 456',
-        address: 'حي الصالحية، دمشق، سوريا'
-      },
-      items: [
-        { name: 'ساعة ذكية', quantity: 1, price: 299 },
-        { name: 'سماعات', quantity: 1, price: 199 }
-      ],
-      total: 498,
-      status: 'ready',
-      orderDate: '2024-01-15 10:45',
-      estimatedDelivery: '2024-01-15 18:00',
-      paymentMethod: 'محفظة إلكترونية',
-      notes: 'طلب عاجل'
-    },
-  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'new': return '#3b82f6';
+      case 'pending': return '#3b82f6';
+      case 'confirmed': return '#059669';
       case 'preparing': return '#f59e0b';
       case 'ready': return '#8b5cf6';
       case 'delivered': return '#059669';
@@ -90,7 +41,8 @@ export default function MerchantOrdersScreen() {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'new': return 'جديد';
+      case 'pending': return 'معلق';
+      case 'confirmed': return 'مؤكد';
       case 'preparing': return 'قيد التحضير';
       case 'ready': return 'جاهز للتوصيل';
       case 'delivered': return 'تم التسليم';
@@ -101,7 +53,8 @@ export default function MerchantOrdersScreen() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'new': return ShoppingCart;
+      case 'pending': return ShoppingCart;
+      case 'confirmed': return CheckCircle;
       case 'preparing': return Clock;
       case 'ready': return Package;
       case 'delivered': return CheckCircle;
@@ -110,16 +63,21 @@ export default function MerchantOrdersScreen() {
     }
   };
 
-  const handleStatusChange = (orderId: string, newStatus: string) => {
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
     Alert.alert(
       'تغيير حالة الطلب',
-      `هل تريد تغيير حالة الطلب ${orderId} إلى "${getStatusText(newStatus)}"؟`,
+      `هل تريد تغيير حالة الطلب إلى "${getStatusText(newStatus)}"؟`,
       [
         { text: 'إلغاء', style: 'cancel' },
         { 
           text: 'تأكيد', 
-          onPress: () => {
-            Alert.alert('تم بنجاح', 'تم تحديث حالة الطلب');
+          onPress: async () => {
+            const { error } = await updateOrderStatus(orderId, newStatus as any);
+            if (error) {
+              Alert.alert('خطأ', error);
+            } else {
+              Alert.alert('تم بنجاح', 'تم تحديث حالة الطلب');
+            }
           }
         }
       ]
@@ -175,14 +133,18 @@ export default function MerchantOrdersScreen() {
         </ScrollView>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          {filteredOrders.map((order) => {
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>جاري تحميل الطلبات...</Text>
+            </View>
+          ) : filteredOrders.map((order: any) => {
             const StatusIcon = getStatusIcon(order.status);
             return (
               <View key={order.id} style={styles.orderCard}>
                 <View style={styles.orderHeader}>
                   <View style={styles.orderIdContainer}>
-                    <Text style={styles.orderId}>{order.id}</Text>
-                    <Text style={styles.orderDate}>{order.orderDate}</Text>
+                    <Text style={styles.orderId}>#{order.id.slice(0, 8)}</Text>
+                    <Text style={styles.orderDate}>{new Date(order.created_at).toLocaleDateString('ar-SY')}</Text>
                   </View>
                   
                   <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
@@ -194,25 +156,25 @@ export default function MerchantOrdersScreen() {
                 <View style={styles.customerInfo}>
                   <View style={styles.customerDetails}>
                     <User size={16} color="#64748b" />
-                    <Text style={styles.customerName}>{order.customer.name}</Text>
+                    <Text style={styles.customerName}>{order.customer?.name || 'عميل'}</Text>
                   </View>
                   
                   <View style={styles.customerDetails}>
                     <Phone size={16} color="#64748b" />
-                    <Text style={styles.customerPhone}>{order.customer.phone}</Text>
+                    <Text style={styles.customerPhone}>{order.customer?.phone || 'غير متوفر'}</Text>
                   </View>
                   
                   <View style={styles.customerDetails}>
                     <MapPin size={16} color="#64748b" />
-                    <Text style={styles.customerAddress}>{order.customer.address}</Text>
+                    <Text style={styles.customerAddress}>{order.delivery_address}</Text>
                   </View>
                 </View>
                 
                 <View style={styles.orderItems}>
                   <Text style={styles.itemsTitle}>المنتجات:</Text>
-                  {order.items.map((item, index) => (
+                  {order.order_items?.map((item: any, index: number) => (
                     <View key={index} style={styles.orderItem}>
-                      <Text style={styles.itemName}>{item.name}</Text>
+                      <Text style={styles.itemName}>{item.product?.name || 'منتج'}</Text>
                       <Text style={styles.itemDetails}>
                         {item.quantity} × ${item.price} = ${item.quantity * item.price}
                       </Text>
@@ -221,7 +183,7 @@ export default function MerchantOrdersScreen() {
                   
                   <View style={styles.orderTotal}>
                     <Text style={styles.totalLabel}>الإجمالي:</Text>
-                    <Text style={styles.totalAmount}>${order.total}</Text>
+                    <Text style={styles.totalAmount}>${order.total_amount}</Text>
                   </View>
                 </View>
                 
@@ -233,14 +195,14 @@ export default function MerchantOrdersScreen() {
                 )}
                 
                 <View style={styles.orderActions}>
-                  {order.status === 'new' && (
+                  {order.status === 'pending' && (
                     <>
                       <TouchableOpacity
-                        style={[styles.actionButton, { backgroundColor: '#f59e0b' }]}
-                        onPress={() => handleStatusChange(order.id, 'preparing')}
+                        style={[styles.actionButton, { backgroundColor: '#059669' }]}
+                        onPress={() => handleStatusChange(order.id, 'confirmed')}
                       >
-                        <Clock size={16} color="#fff" />
-                        <Text style={styles.actionButtonText}>بدء التحضير</Text>
+                        <CheckCircle size={16} color="#fff" />
+                        <Text style={styles.actionButtonText}>تأكيد الطلب</Text>
                       </TouchableOpacity>
                       
                       <TouchableOpacity
@@ -249,6 +211,18 @@ export default function MerchantOrdersScreen() {
                       >
                         <XCircle size={16} color="#fff" />
                         <Text style={styles.actionButtonText}>إلغاء</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                  
+                  {order.status === 'confirmed' && (
+                    <>
+                      <TouchableOpacity
+                        style={[styles.actionButton, { backgroundColor: '#f59e0b' }]}
+                        onPress={() => handleStatusChange(order.id, 'preparing')}
+                      >
+                        <Clock size={16} color="#fff" />
+                        <Text style={styles.actionButtonText}>بدء التحضير</Text>
                       </TouchableOpacity>
                     </>
                   )}
@@ -536,5 +510,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Cairo-Bold',
     color: '#fff',
     marginLeft: 6,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 50,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: 'Tajawal-Regular',
+    color: '#64748b',
   },
 });

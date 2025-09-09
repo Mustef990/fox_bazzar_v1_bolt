@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useProducts } from '@/hooks/useProducts';
+import { useAuth } from '@/hooks/useAuth';
 import {
   View,
   Text,
@@ -17,10 +19,13 @@ export default function MerchantProductsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [addProductModalVisible, setAddProductModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { user } = useAuth();
+  const { products, loading, addProduct } = useProducts(user?.id);
   const [productData, setProductData] = useState({
     name: '',
     description: '',
     price: '',
+    originalPrice: '',
     category: '',
     stock: '',
     sku: ''
@@ -35,75 +40,39 @@ export default function MerchantProductsScreen() {
     { id: 'books', name: 'كتب', count: 26 },
   ];
 
-  const products = [
-    {
-      id: 1,
-      name: 'هاتف ذكي متطور',
-      description: 'هاتف ذكي بمواصفات عالية وكاميرا متقدمة',
-      price: 599,
-      originalPrice: 699,
-      category: 'إلكترونيات',
-      stock: 25,
-      sold: 45,
-      rating: 4.8,
-      reviews: 124,
-      image: 'https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=300',
-      status: 'active',
-      sku: 'PHONE001'
-    },
-    {
-      id: 2,
-      name: 'لابتوب عالي الأداء',
-      description: 'لابتوب للألعاب والعمل المهني',
-      price: 1299,
-      originalPrice: 1499,
-      category: 'إلكترونيات',
-      stock: 12,
-      sold: 23,
-      rating: 4.9,
-      reviews: 89,
-      image: 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=300',
-      status: 'active',
-      sku: 'LAPTOP001'
-    },
-    {
-      id: 3,
-      name: 'ساعة ذكية رياضية',
-      description: 'ساعة ذكية لتتبع اللياقة البدنية',
-      price: 299,
-      originalPrice: 399,
-      category: 'رياضة',
-      stock: 0,
-      sold: 67,
-      rating: 4.7,
-      reviews: 156,
-      image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=300',
-      status: 'out_of_stock',
-      sku: 'WATCH001'
-    },
-  ];
-
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
     if (!productData.name || !productData.price || !productData.category) {
       Alert.alert('خطأ', 'يرجى ملء جميع الحقول المطلوبة');
       return;
     }
     
-    Alert.alert(
-      'تأكيد الإضافة',
-      'هل تريد إضافة هذا المنتج؟',
-      [
-        { text: 'إلغاء', style: 'cancel' },
-        { 
-          text: 'إضافة', 
-          onPress: () => {
-            setAddProductModalVisible(false);
-            setProductData({ name: '', description: '', price: '', category: '', stock: '', sku: '' });
-            Alert.alert('تم بنجاح', 'تم إضافة المنتج بنجاح');
-          }
-        }
-      ]
-    );
+    setLoading(true);
+    
+    const newProduct = {
+      merchant_id: user?.id || '',
+      name: productData.name,
+      description: productData.description,
+      price: parseFloat(productData.price),
+      original_price: productData.originalPrice ? parseFloat(productData.originalPrice) : null,
+      category: productData.category,
+      stock: parseInt(productData.stock) || 0,
+      sku: productData.sku,
+      status: 'active' as const,
+      rating: 0,
+      reviews_count: 0
+    };
+    
+    const { data, error } = await addProduct(newProduct);
+    
+    if (error) {
+      Alert.alert('خطأ', error);
+    } else {
+      setAddProductModalVisible(false);
+      setProductData({ name: '', description: '', price: '', originalPrice: '', category: '', stock: '', sku: '' });
+      Alert.alert('تم بنجاح', 'تم إضافة المنتج بنجاح');
+    }
+    
+    setLoading(false);
   };
 
   const getStatusColor = (status: string) => {
@@ -126,7 +95,7 @@ export default function MerchantProductsScreen() {
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || product.category === categories.find(c => c.id === selectedCategory)?.name;
+    const matchesCategory = selectedCategory === 'all' || product.category.toLowerCase().includes(selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -200,10 +169,14 @@ export default function MerchantProductsScreen() {
         </ScrollView>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          {filteredProducts.map((product) => (
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>جاري تحميل المنتجات...</Text>
+            </View>
+          ) : filteredProducts.map((product) => (
             <View key={product.id} style={styles.productCard}>
               <View style={styles.productHeader}>
-                <Image source={{ uri: product.image }} style={styles.productImage} />
+                <Image source={{ uri: product.image_url || 'https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg?auto=compress&cs=tinysrgb&w=300' }} style={styles.productImage} />
                 
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{product.name}</Text>
@@ -212,7 +185,9 @@ export default function MerchantProductsScreen() {
                   
                   <View style={styles.productMeta}>
                     <View style={styles.priceContainer}>
-                      <Text style={styles.originalPrice}>${product.originalPrice}</Text>
+                      {product.original_price && (
+                        <Text style={styles.originalPrice}>${product.original_price}</Text>
+                      )}
                       <Text style={styles.currentPrice}>${product.price}</Text>
                     </View>
                     
@@ -236,13 +211,13 @@ export default function MerchantProductsScreen() {
                 
                 <View style={styles.statItem}>
                   <BarChart3 size={16} color="#64748b" />
-                  <Text style={styles.statValue}>{product.sold}</Text>
+                  <Text style={styles.statValue}>0</Text>
                   <Text style={styles.statLabel}>مبيع</Text>
                 </View>
                 
                 <View style={styles.statItem}>
                   <Eye size={16} color="#64748b" />
-                  <Text style={styles.statValue}>{product.reviews}</Text>
+                  <Text style={styles.statValue}>{product.reviews_count}</Text>
                   <Text style={styles.statLabel}>مراجعة</Text>
                 </View>
               </View>
@@ -314,6 +289,19 @@ export default function MerchantProductsScreen() {
                   placeholderTextColor="#94a3b8"
                   multiline
                   numberOfLines={4}
+                  textAlign="right"
+                />
+              </View>
+              
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>السعر الأصلي ($)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={productData.originalPrice}
+                  onChangeText={(text) => setProductData(prev => ({ ...prev, originalPrice: text }))}
+                  placeholder="أدخل السعر الأصلي (اختياري)"
+                  placeholderTextColor="#94a3b8"
+                  keyboardType="numeric"
                   textAlign="right"
                 />
               </View>
@@ -751,5 +739,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Cairo-Bold',
     color: '#fff',
     marginLeft: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 50,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: 'Tajawal-Regular',
+    color: '#64748b',
   },
 });

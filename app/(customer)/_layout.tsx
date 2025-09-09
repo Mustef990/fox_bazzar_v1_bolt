@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, Search, ShoppingCart, User } from 'lucide-react-native';
+import { Chrome as Home, Search, ShoppingCart, User, Package } from 'lucide-react-native';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -90,6 +90,49 @@ export default function CustomerLayout() {
               label="السلة"
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="orders"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon 
+              icon={Package} 
+              color={color} 
+              focused={focused} 
+              label="طلباتي"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="offers"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="ads"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="search"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="wallet"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          href: null, // Hide from tab bar
         }}
       />
       <Tabs.Screen
