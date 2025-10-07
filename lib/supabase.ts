@@ -5,16 +5,30 @@ const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Auth helpers
 export const signUp = async (email: string, password: string, userData: any) => {
-  const { data, error } = await supabase.auth.signUp({
+  const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: userData
-    }
   });
-  return { data, error };
+
+  if (authError || !authData.user) {
+    return { data: authData, error: authError };
+  }
+
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .insert({
+      id: authData.user.id,
+      name: userData.name,
+      phone: userData.phone,
+      role: userData.role || 'customer',
+    });
+
+  if (profileError) {
+    return { data: authData, error: profileError };
+  }
+
+  return { data: authData, error: null };
 };
 
 export const signIn = async (email: string, password: string) => {
@@ -33,4 +47,14 @@ export const signOut = async () => {
 export const getCurrentUser = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   return user;
+};
+
+export const getUserProfile = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
+
+  return { data, error };
 };

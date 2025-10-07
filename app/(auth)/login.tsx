@@ -83,24 +83,38 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    
+
     try {
       const { data, error } = await signIn(email, password);
-      
+
       if (error) {
         Alert.alert('خطأ في تسجيل الدخول', error.message);
+        setLoading(false);
         return;
       }
-      
+
       if (data.user) {
-        // التحقق من دور المستخدم
-        const userRole = data.user.user_metadata?.role || 'customer';
-        
-        if (userRole !== role) {
-          Alert.alert('خطأ', 'هذا الحساب غير مخصص لهذا الدور');
+        const { supabase } = await import('@/lib/supabase');
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        if (profileError || !profileData) {
+          Alert.alert('خطأ', 'لم يتم العثور على ملف المستخدم');
+          setLoading(false);
           return;
         }
-        
+
+        const userRole = profileData.role;
+
+        if (userRole !== role) {
+          Alert.alert('خطأ', 'هذا الحساب غير مخصص لهذا الدور');
+          setLoading(false);
+          return;
+        }
+
         router.replace(roleInfo.route);
       }
     } catch (err) {

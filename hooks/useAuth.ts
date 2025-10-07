@@ -1,22 +1,36 @@
 import { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase, signUp as signUpHelper, signIn as signInHelper, signOut as signOutHelper, getUserProfile } from '@/lib/supabase';
+import { User as ProfileUser } from '@/types/database';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<ProfileUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
+
+      if (session?.user) {
+        const { data: profileData } = await getUserProfile(session.user.id);
+        setProfile(profileData);
+      }
+
       setLoading(false);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null);
+
+        if (session?.user) {
+          const { data: profileData } = await getUserProfile(session.user.id);
+          setProfile(profileData);
+        } else {
+          setProfile(null);
+        }
+
         setLoading(false);
       }
     );
@@ -26,25 +40,16 @@ export function useAuth() {
 
   return {
     user,
+    profile,
     loading,
     signUp: async (email: string, password: string, userData: any) => {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: userData }
-      });
-      return { data, error };
+      return await signUpHelper(email, password, userData);
     },
     signIn: async (email: string, password: string) => {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      return { data, error };
+      return await signInHelper(email, password);
     },
     signOut: async () => {
-      const { error } = await supabase.auth.signOut();
-      return { error };
+      return await signOutHelper();
     }
   };
 }
